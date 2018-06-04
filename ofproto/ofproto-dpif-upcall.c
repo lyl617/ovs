@@ -2145,9 +2145,15 @@ revalidate_ukey__(struct udpif *udpif, const struct udpif_key *ukey,
 
     if (xoutp->slow) {
         struct ofproto_dpif *ofproto;
+<<<<<<< HEAD
         ofp_port_t ofp_in_port;
 
         ofproto = xlate_lookup_ofproto(udpif->backer, &ctx.flow, &ofp_in_port);
+=======
+        ofproto = xlate_lookup_ofproto(udpif->backer, &ctx.flow, NULL);
+        uint32_t smid = ofproto ? ofproto->up.slowpath_meter_id : UINT32_MAX;
+        uint32_t cmid = ofproto ? ofproto->up.controller_meter_id : UINT32_MAX;
+>>>>>>> custom
 
         ofpbuf_clear(odp_actions);
 

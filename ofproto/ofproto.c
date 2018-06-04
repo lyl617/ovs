@@ -2726,9 +2726,16 @@ init_ports(struct ofproto *p)
 static bool
 ofport_is_internal_or_patch(const struct ofproto *p, const struct ofport *port)
 {
+<<<<<<< HEAD
     const char *netdev_type = netdev_get_type(port->netdev);
     return !strcmp(netdev_type, ofproto_port_open_type(p, "internal")) ||
            !strcmp(netdev_type, ofproto_port_open_type(p, "patch"));
+=======
+    return !strcmp(netdev_get_type(port->netdev),
+                   ofproto_port_open_type(p->type, "internal")) ||
+           !strcmp(netdev_get_type(port->netdev),
+                   ofproto_port_open_type(p->type, "patch"));
+>>>>>>> custom
 }
 
 /* If 'port' is internal or patch and if the user didn't explicitly specify an

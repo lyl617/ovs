@@ -66,8 +66,11 @@ Q: What Linux kernel versions does each Open vSwitch release work with?
     2.6.x        3.10 to 4.7
     2.7.x        3.10 to 4.9
     2.8.x        3.10 to 4.12
+<<<<<<< HEAD
     2.9.x        3.10 to 4.13
     2.10.x       3.10 to 4.14
+=======
+>>>>>>> custom
     ============ ==============
 
     Open vSwitch userspace should also work with the Linux kernel module built
@@ -163,9 +166,14 @@ Q: What DPDK version does each Open vSwitch release work with?
     2.4.x        2.0
     2.5.x        2.2
     2.6.x        16.07.2
+<<<<<<< HEAD
     2.7.x        16.11.6
     2.8.x        17.05.2
     2.9.x        17.11.2
+=======
+    2.7.x        16.11.3
+    2.8.x        17.05.2
+>>>>>>> custom
     ============ =======
 
 Q: Are all the DPDK releases that OVS versions work with maintained?

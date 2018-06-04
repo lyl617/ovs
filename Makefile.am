@@ -83,10 +83,21 @@ EXTRA_DIST = \
 	.travis/osx-prepare.sh \
 	appveyor.yml \
 	boot.sh \
+<<<<<<< HEAD
 	poc/builders/Vagrantfile \
 	poc/playbook-centos-builder.yml \
 	poc/playbook-fedora-builder.yml \
 	poc/playbook-ubuntu-builder.yml \
+=======
+	build-aux/cccl \
+	build-aux/cksum-schema-check \
+	build-aux/calculate-schema-cksum \
+	build-aux/dist-docs \
+	build-aux/dpdkstrip.pl \
+	build-aux/sodepends.pl \
+	build-aux/soexpand.pl \
+	build-aux/xml2nroff \
+>>>>>>> custom
 	$(MAN_FRAGMENTS) \
 	$(MAN_ROOTS) \
 	Vagrantfile \
@@ -145,8 +156,13 @@ ro_shell = printf '\043 Generated automatically -- do not modify!    -*- buffer-
 
 SUFFIXES += .in
 .in:
+<<<<<<< HEAD
 	$(AM_V_GEN)PYTHONPATH=$$PYTHONPATH$(psep)$(srcdir)/python $(PYTHON) $(srcdir)/build-aux/soexpand.py -I$(srcdir) < $< | \
 	  $(PYTHON) $(srcdir)/build-aux/dpdkstrip.py $(DPDKSTRIP_FLAGS) | \
+=======
+	$(AM_V_GEN)$(PERL) $(srcdir)/build-aux/soexpand.pl -I$(srcdir) < $< | \
+	  $(PERL) $(srcdir)/build-aux/dpdkstrip.pl $(DPDKSTRIP_FLAGS) | \
+>>>>>>> custom
 	  sed \
 	    -e 's,[@]PKIDIR[@],$(PKIDIR),g' \
 	    -e 's,[@]LOGDIR[@],$(LOGDIR),g' \

@@ -376,6 +376,7 @@ OVSDB_CHECK_IDL([simple idl, writing via IDL with unicode],
 003: done
 ]])
 
+<<<<<<< HEAD
 m4_define([OVSDB_CHECK_IDL_PYN_WITH_EXPOUT],
   [AT_SETUP([$1])
    AT_SKIP_IF([test $7 = no])
@@ -409,6 +410,8 @@ OVSDB_CHECK_IDL_PY_WITH_EXPOUT([simple idl, writing large data via IDL with unic
 002: i=1 r=0 b=false s=$(printf "测试超过四千零九十六个字节的中文字符串以使解码出现问题。%.0s" {1..100}) u=<0> ia=[] ra=[] ba=[] sa=[] ua=[] uuid=<2>
 003: done]])
 
+=======
+>>>>>>> custom
 OVSDB_CHECK_IDL([simple idl, handling verification failure],
   [['["idltest",
       {"op": "insert",

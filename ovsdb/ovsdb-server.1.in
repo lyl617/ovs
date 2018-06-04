@@ -43,9 +43,15 @@ files must already have been created and initialized using, for
 example, \fBovsdb\-tool\fR's \fBcreate\fR, \fBcreate\-cluster\fR, or
 \fBjoin\-cluster\fR command.
 .PP
+<<<<<<< HEAD
 This OVSDB implementation supports standalone, active-backup, and
 clustered database service models, as well as database replication.
 See the Service Models section of \fBovsdb\fR(7) for more information.
+=======
+By default, \fBovsdb\-server\fR runs as an active server, except when the
+\fB\-\-sync\-from=\fIserver\fR command line option is specified and without
+the \fB\-\-active\fR option.  During runtime, \fBovsdb\-server\fR role can be switch by using appctl commands.
+>>>>>>> custom
 .PP
 For clustered databases, when the \fB\-\-detach\fR option is used,
 \fBovsdb\-server\fR detaches without waiting for the server to

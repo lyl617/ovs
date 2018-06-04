@@ -383,8 +383,16 @@ class Stream(object):
         elif len(buf) == 0:
             return 0
 
+<<<<<<< HEAD
         # We must have bytes for sending.
         if isinstance(buf, six.text_type):
+=======
+        # Python 3 has separate types for strings and bytes.  We must have
+        # bytes here.
+        if six.PY3 and not isinstance(buf, bytes):
+            buf = bytes(buf, 'utf-8')
+        elif six.PY2:
+>>>>>>> custom
             buf = buf.encode('utf-8')
 
         if sys.platform == 'win32' and self.socket is None:

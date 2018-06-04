@@ -214,6 +214,7 @@ static int erspan_rcv(struct sk_buff *skb, struct tnl_ptk_info *tpi,
 				  iph->saddr, iph->daddr, 0);
 
 	if (tunnel) {
+<<<<<<< HEAD
 		len = gre_hdr_len + erspan_hdr_len(ver);
 		if (unlikely(!pskb_may_pull(skb, len)))
 			return PACKET_REJECT;
@@ -239,6 +240,26 @@ static int erspan_rcv(struct sk_buff *skb, struct tnl_ptk_info *tpi,
 
 			tun_dst = rpl_ip_tun_rx_dst(skb, flags, tun_id, sizeof(*md));
 			if (!tun_dst)
+=======
+		__be16 flags;
+		__be64 tun_id;
+		int err;
+
+		if (iptunnel_pull_offloads(skb))
+			return PACKET_REJECT;
+
+		skb_pop_mac_header(skb);
+		flags = tpi->flags & (TUNNEL_CSUM | TUNNEL_KEY);
+		tun_id = key_to_tunnel_id(tpi->key);
+		ovs_ip_tun_rx_dst(&tun_dst, skb, flags, tun_id, 0);
+
+		skb_reset_network_header(skb);
+		err = IP_ECN_decapsulate(iph, skb);
+		if (unlikely(err)) {
+			if (err > 1) {
+				++tunnel->dev->stats.rx_frame_errors;
+				++tunnel->dev->stats.rx_errors;
+>>>>>>> custom
 				return PACKET_REJECT;
 
 			md = ip_tunnel_info_opts(&tun_dst->u.tun_info);

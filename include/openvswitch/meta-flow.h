@@ -1810,7 +1810,11 @@ enum OVS_PACKED_ENUM mf_field_id {
      * Prerequisites: NSH.
      * Access: read/write.
      * NXM: none.
+<<<<<<< HEAD
      * OXM: NXOXM_NSH_FLAGS(1) since v2.8.
+=======
+     * OXM: NXOXM_NSH_FLAGS(1) since OF1.3 and v2.8.
+>>>>>>> custom
      */
     MFF_NSH_FLAGS,
 
@@ -1824,7 +1828,11 @@ enum OVS_PACKED_ENUM mf_field_id {
      * Prerequisites: NSH.
      * Access: read-only.
      * NXM: none.
+<<<<<<< HEAD
      * OXM: NXOXM_NSH_MDTYPE(2) since v2.8.
+=======
+     * OXM: NXOXM_NSH_MDTYPE(2) since OF1.3 and v2.8.
+>>>>>>> custom
      */
     MFF_NSH_MDTYPE,
 
@@ -1838,7 +1846,11 @@ enum OVS_PACKED_ENUM mf_field_id {
      * Prerequisites: NSH.
      * Access: read-only.
      * NXM: none.
+<<<<<<< HEAD
      * OXM: NXOXM_NSH_NP(3) since v2.8.
+=======
+     * OXM: NXOXM_NSH_NP(3) since OF1.3 and v2.8.
+>>>>>>> custom
      */
     MFF_NSH_NP,
 
@@ -1852,7 +1864,11 @@ enum OVS_PACKED_ENUM mf_field_id {
      * Prerequisites: NSH.
      * Access: read/write.
      * NXM: none.
+<<<<<<< HEAD
      * OXM: NXOXM_NSH_SPI(4) since v2.8.
+=======
+     * OXM: NXOXM_NSH_SPI(4) since OF1.3 and v2.8.
+>>>>>>> custom
      */
     MFF_NSH_SPI,
 
@@ -1866,7 +1882,11 @@ enum OVS_PACKED_ENUM mf_field_id {
      * Prerequisites: NSH.
      * Access: read/write.
      * NXM: none.
+<<<<<<< HEAD
      * OXM: NXOXM_NSH_SI(5) since v2.8.
+=======
+     * OXM: NXOXM_NSH_SI(5) since OF1.3 and v2.8.
+>>>>>>> custom
      */
     MFF_NSH_SI,
 
@@ -1880,16 +1900,24 @@ enum OVS_PACKED_ENUM mf_field_id {
      * Prerequisites: NSH.
      * Access: read/write.
      * NXM: none.
+<<<<<<< HEAD
      * OXM: NXOXM_NSH_C1(6) since v2.8.        <1>
      * OXM: NXOXM_NSH_C2(7) since v2.8.        <2>
      * OXM: NXOXM_NSH_C3(8) since v2.8.        <3>
      * OXM: NXOXM_NSH_C4(9) since v2.8.        <4>
+=======
+     * OXM: NXOXM_NSH_C1(6) since OF1.3 and v2.8.        <1>
+     * OXM: NXOXM_NSH_C2(7) since OF1.3 and v2.8.        <2>
+     * OXM: NXOXM_NSH_C3(8) since OF1.3 and v2.8.        <3>
+     * OXM: NXOXM_NSH_C4(9) since OF1.3 and v2.8.        <4>
+>>>>>>> custom
      */
     MFF_NSH_C1,
     MFF_NSH_C2,
     MFF_NSH_C3,
     MFF_NSH_C4,
 
+<<<<<<< HEAD
     /* "nsh_ttl".
      *
      * TTL field in NSH base header.
@@ -1904,6 +1932,8 @@ enum OVS_PACKED_ENUM mf_field_id {
      */
     MFF_NSH_TTL,
 
+=======
+>>>>>>> custom
     MFF_N_IDS
 };
 

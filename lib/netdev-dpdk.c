@@ -2007,6 +2007,7 @@ netdev_dpdk_rxq_recv(struct netdev_rxq *rxq, struct dp_packet_batch *batch,
 
     batch->count = nb_rx;
     dp_packet_batch_init_packet_fields(batch);
+<<<<<<< HEAD
 
     if (qfill) {
         if (nb_rx == NETDEV_MAX_BURST) {
@@ -2015,6 +2016,8 @@ netdev_dpdk_rxq_recv(struct netdev_rxq *rxq, struct dp_packet_batch *batch,
             *qfill = 0;
         }
     }
+=======
+>>>>>>> custom
 
     return 0;
 }
@@ -3443,8 +3446,13 @@ netdev_dpdk_ring_send(struct netdev *netdev, int qid,
      * the rss hash field is clear. This is because the same mbuf may be
      * modified by the consumer of the ring and return into the datapath
      * without recalculating the RSS hash. */
+<<<<<<< HEAD
     DP_PACKET_BATCH_FOR_EACH (i, packet, batch) {
         dp_packet_mbuf_rss_flag_reset(packet);
+=======
+    for (i = 0; i < batch->count; i++) {
+        dp_packet_mbuf_rss_flag_reset(batch->packets[i]);
+>>>>>>> custom
     }
 
     netdev_dpdk_send__(dev, qid, batch, concurrent_txq);

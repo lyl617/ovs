@@ -136,6 +136,19 @@ OVN To-do List
     inactivity_probe value is not sufficient and ovsdb-server drops the client
     IDL connections for openstack deployments when the neutron server is heavily
     loaded.
+<<<<<<< HEAD
+=======
+
+    We need to find a proper solution to solve this issue instead of increasing
+    the inactivity_probe value.
+
+* Consider the use of BFD as tunnel monitor.
+
+  The use of BFD for hypervisor-to-hypervisor tunnels is probably not worth it,
+  since there's no alternative to switch to if a tunnel goes down.  It could
+  make sense at a slow rate if someone does OVN monitoring system integration,
+  but not otherwise.
+>>>>>>> custom
 
     We need to find a proper solution to solve this issue instead of increasing
     the inactivity_probe value.

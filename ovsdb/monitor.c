@@ -648,6 +648,12 @@ ovsdb_monitor_table_condition_create(
     shash_add(&condition->tables, table->schema->name, mtc);
     /* On session startup old == new condition */
     ovsdb_condition_clone(&mtc->new_condition, &mtc->old_condition);
+<<<<<<< HEAD
+=======
+    if (ovsdb_condition_is_true(&mtc->old_condition)) {
+        condition->n_true_cnd++;
+    }
+>>>>>>> custom
     ovsdb_monitor_session_condition_set_mode(condition);
 
     return NULL;

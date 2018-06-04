@@ -255,8 +255,11 @@ struct xlate_ctx {
                                  * true. */
     bool pending_encap;         /* True when waiting to commit a pending
                                  * encap action. */
+<<<<<<< HEAD
     bool pending_decap;         /* True when waiting to commit a pending
                                  * decap action. */
+=======
+>>>>>>> custom
     struct ofpbuf *encap_data;  /* May contain a pointer to an ofpbuf with
                                  * context for the datapath encap action.*/
 
@@ -849,6 +852,7 @@ xlate_xport_init(struct xlate_cfg *xcfg, struct xport *xport)
                 hash_ofp_port(xport->ofp_port));
     hmap_insert(&xcfg->xports_uuid, &xport->uuid_node,
                 uuid_hash(&xport->uuid));
+<<<<<<< HEAD
 }
 
 static struct xbridge_addr *
@@ -899,6 +903,8 @@ xbridge_addr_unref(struct xbridge_addr *addr)
         free(addr->addr);
         free(addr);
     }
+=======
+>>>>>>> custom
 }
 
 static void
@@ -2759,7 +2765,11 @@ xlate_normal_mcast_send_rports(struct xlate_ctx *ctx,
     struct xbundle *mcast_xbundle;
 
     LIST_FOR_EACH(rport, node, &ms->rport_list) {
+<<<<<<< HEAD
         mcast_xbundle = xbundle_lookup(ctx->xcfg, rport->port);
+=======
+        mcast_xbundle = xbundle_lookup(xcfg, rport->port);
+>>>>>>> custom
         if (mcast_xbundle
             && mcast_xbundle != in_xbundle
             && mcast_xbundle->ofbundle != in_xbundle->ofbundle) {
@@ -2990,7 +3000,12 @@ xlate_normal(struct xlate_ctx *ctx)
         ovs_rwlock_unlock(&ctx->xbridge->ml->rwlock);
 
         if (mac_port) {
+<<<<<<< HEAD
             struct xbundle *mac_xbundle = xbundle_lookup(ctx->xcfg, mac_port);
+=======
+            struct xlate_cfg *xcfg = ovsrcu_get(struct xlate_cfg *, &xcfgp);
+            struct xbundle *mac_xbundle = xbundle_lookup(xcfg, mac_port);
+>>>>>>> custom
             if (mac_xbundle
                 && mac_xbundle != in_xbundle
                 && mac_xbundle->ofbundle != in_xbundle->ofbundle) {
@@ -3595,9 +3610,14 @@ xlate_commit_actions(struct xlate_ctx *ctx)
     ctx->xout->slow |= commit_odp_actions(&ctx->xin->flow, &ctx->base_flow,
                                           ctx->odp_actions, ctx->wc,
                                           use_masked, ctx->pending_encap,
+<<<<<<< HEAD
                                           ctx->pending_decap, ctx->encap_data);
     ctx->pending_encap = false;
     ctx->pending_decap = false;
+=======
+                                          ctx->encap_data);
+    ctx->pending_encap = false;
+>>>>>>> custom
     ofpbuf_delete(ctx->encap_data);
     ctx->encap_data = NULL;
 }
@@ -3917,7 +3937,11 @@ compose_output_action__(struct xlate_ctx *ctx, ofp_port_t ofp_port,
 
     /* If 'struct flow' gets additional metadata, we'll need to zero it out
      * before traversing a patch port. */
+<<<<<<< HEAD
     BUILD_ASSERT_DECL(FLOW_WC_SEQ == 41);
+=======
+    BUILD_ASSERT_DECL(FLOW_WC_SEQ == 40);
+>>>>>>> custom
     memset(&flow_tnl, 0, sizeof flow_tnl);
 
     if (!check_output_prerequisites(ctx, xport, flow, check_stp)) {
@@ -4570,7 +4594,63 @@ flood_packet_to_port(struct xlate_ctx *ctx, const struct xport *xport,
 static void
 flood_packets(struct xlate_ctx *ctx, bool all, bool is_last_action)
 {
+<<<<<<< HEAD
     const struct xport *xport, *last = NULL;
+=======
+    const struct nlattr *a;
+    unsigned int left;
+
+    NL_ATTR_FOR_EACH_UNSAFE (a, left, actions, actions_len) {
+        int type = nl_attr_type(a);
+
+        switch ((enum ovs_action_attr) type) {
+        case OVS_ACTION_ATTR_HASH:
+        case OVS_ACTION_ATTR_PUSH_VLAN:
+        case OVS_ACTION_ATTR_POP_VLAN:
+        case OVS_ACTION_ATTR_PUSH_MPLS:
+        case OVS_ACTION_ATTR_POP_MPLS:
+        case OVS_ACTION_ATTR_SET:
+        case OVS_ACTION_ATTR_SET_MASKED:
+        case OVS_ACTION_ATTR_TRUNC:
+        case OVS_ACTION_ATTR_OUTPUT:
+        case OVS_ACTION_ATTR_TUNNEL_PUSH:
+        case OVS_ACTION_ATTR_TUNNEL_POP:
+        case OVS_ACTION_ATTR_USERSPACE:
+        case OVS_ACTION_ATTR_RECIRC:
+        case OVS_ACTION_ATTR_CT:
+        case OVS_ACTION_ATTR_PUSH_ETH:
+        case OVS_ACTION_ATTR_POP_ETH:
+        case OVS_ACTION_ATTR_ENCAP_NSH:
+        case OVS_ACTION_ATTR_DECAP_NSH:
+        case OVS_ACTION_ATTR_METER:
+            ofpbuf_put(b, a, nl_attr_len_pad(a, left));
+            break;
+
+        case OVS_ACTION_ATTR_CLONE:
+            /* If the clone action has been fully xlated, it can
+             * be skipped, since any actions executed within clone
+             * do not affect the current packet.
+             *
+             * When xlating actions within clone, the clone action,
+             * because it is an nested netlink attribute, do not have
+             * a valid 'nla_len'; it will be zero instead.  Skip
+             * the clone header to find the start of the actions
+             * enclosed. Treat those actions as if they are written
+             * outside of clone.   */
+            if (!a->nla_len) {
+                bool ok;
+                if (left < NLA_HDRLEN) {
+                    goto error;
+                }
+
+                ok = xlate_fixup_actions(b, nl_attr_get_unspec(a, 0),
+                                         left - NLA_HDRLEN);
+                if (!ok) {
+                    goto error;
+                }
+            }
+            break;
+>>>>>>> custom
 
     /* Use 'last' the keep track of the last output port. */
     HMAP_FOR_EACH (xport, ofp_node, &ctx->xbridge->xports) {
@@ -5977,6 +6057,7 @@ rewrite_flow_encap_ethernet(struct xlate_ctx *ctx,
 
 /* For an MD2 NSH header returns a pointer to an ofpbuf with the encoded
  * MD2 TLVs provided as encap properties to the encap operation. This
+<<<<<<< HEAD
  * will be stored as encap_data in the ctx and copied into the push_nsh
  * action at the next commit. */
 static struct ofpbuf *
@@ -5988,6 +6069,19 @@ rewrite_flow_push_nsh(struct xlate_ctx *ctx,
     ovs_be32 packet_type = flow->packet_type;
     const char *ptr = (char *) encap->props;
     struct ofpbuf *buf = ofpbuf_new(NSH_CTX_HDRS_MAX_LEN);
+=======
+ * will be stored as encap_data in the ctx and copied into the encap_nsh
+ * action at the next commit. */
+static struct ofpbuf *
+rewrite_flow_encap_nsh(struct xlate_ctx *ctx,
+                       const struct ofpact_encap *encap,
+                       struct flow *flow,
+                       struct flow_wildcards *wc)
+{
+    ovs_be32 packet_type = flow->packet_type;
+    const char *ptr = (char *) encap->props;
+    struct ofpbuf *buf = ofpbuf_new(OVS_ENCAP_NSH_MAX_MD_LEN);
+>>>>>>> custom
     uint8_t md_type = NSH_M_TYPE1;
     uint8_t np = 0;
     int i;
@@ -6027,7 +6121,11 @@ rewrite_flow_push_nsh(struct xlate_ctx *ctx,
         }
         ptr += ROUND_UP(prop_ptr->len, 8);
     }
+<<<<<<< HEAD
     if (buf->size == 0 || buf->size > NSH_CTX_HDRS_MAX_LEN) {
+=======
+    if (buf->size == 0 || buf->size > OVS_ENCAP_NSH_MAX_MD_LEN) {
+>>>>>>> custom
         ofpbuf_delete(buf);
         buf = NULL;
     }
@@ -6065,6 +6163,7 @@ rewrite_flow_push_nsh(struct xlate_ctx *ctx,
     /* Populate the flow with the new NSH header. */
     flow->packet_type = htonl(PT_NSH);
     flow->dl_type = htons(ETH_TYPE_NSH);
+<<<<<<< HEAD
     flow->nsh.flags = 0;
     flow->nsh.ttl = 63;
     flow->nsh.np = np;
@@ -6073,6 +6172,16 @@ rewrite_flow_push_nsh(struct xlate_ctx *ctx,
     if (md_type == NSH_M_TYPE1) {
         flow->nsh.mdtype = NSH_M_TYPE1;
         memset(flow->nsh.context, 0, sizeof flow->nsh.context);
+=======
+    flow->nsh.flags = 0;    /* */
+    flow->nsh.np = np;
+    flow->nsh.spi = 0;
+    flow->nsh.si = 255;
+
+    if (md_type == NSH_M_TYPE1) {
+        flow->nsh.mdtype = NSH_M_TYPE1;
+        memset(flow->nsh.c, 0, sizeof flow->nsh.c);
+>>>>>>> custom
         if (buf) {
             /* Drop any MD2 context TLVs. */
             ofpbuf_delete(buf);
@@ -6081,7 +6190,10 @@ rewrite_flow_push_nsh(struct xlate_ctx *ctx,
     } else if (md_type == NSH_M_TYPE2) {
         flow->nsh.mdtype = NSH_M_TYPE2;
     }
+<<<<<<< HEAD
     flow->nsh.mdtype &= NSH_MDTYPE_MASK;
+=======
+>>>>>>> custom
 
     return buf;
 }
@@ -6104,7 +6216,15 @@ xlate_generic_encap_action(struct xlate_ctx *ctx,
             rewrite_flow_encap_ethernet(ctx, flow, wc);
             break;
         case PT_NSH:
+<<<<<<< HEAD
             encap_data = rewrite_flow_push_nsh(ctx, encap, flow, wc);
+=======
+            encap_data = rewrite_flow_encap_nsh(ctx, encap, flow, wc);
+            break;
+        default:
+            /* New packet type was checked during decoding. */
+            OVS_NOT_REACHED();
+>>>>>>> custom
             break;
         default:
             /* New packet type was checked during decoding. */
@@ -6146,7 +6266,11 @@ xlate_generic_decap_action(struct xlate_ctx *ctx,
             }
             return false;
         case PT_NSH:
+<<<<<<< HEAD
             /* The pop_nsh action is generated at the commit executed as
+=======
+            /* The decap_nsh action is generated at the commit executed as
+>>>>>>> custom
              * part of freezing the ctx for recirculation. Here we just set
              * the new packet type based on the NSH next protocol field. */
             switch (flow->nsh.np) {
@@ -6172,7 +6296,10 @@ xlate_generic_decap_action(struct xlate_ctx *ctx,
                 break;
             }
             ctx->wc->masks.nsh.np = UINT8_MAX;
+<<<<<<< HEAD
             ctx->pending_decap = true;
+=======
+>>>>>>> custom
             /* Trigger recirculation. */
             return true;
         default:
@@ -7040,7 +7167,10 @@ xlate_actions(struct xlate_in *xin, struct xlate_out *xout)
         .in_action_set = false,
         .in_packet_out = xin->in_packet_out,
         .pending_encap = false,
+<<<<<<< HEAD
         .pending_decap = false,
+=======
+>>>>>>> custom
         .encap_data = NULL,
 
         .table_id = 0,

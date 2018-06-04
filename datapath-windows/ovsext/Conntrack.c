@@ -217,8 +217,11 @@ OvsPostCtEventEntry(POVS_CT_ENTRY entry, UINT8 type)
 static __inline VOID
 OvsCtIncrementCounters(POVS_CT_ENTRY entry, BOOLEAN reply, PNET_BUFFER_LIST nbl)
 {
+<<<<<<< HEAD
     LOCK_STATE_EX lockState;
     NdisAcquireRWLockWrite(entry->lock, &lockState, 0);
+=======
+>>>>>>> custom
     if (reply) {
         entry->rev_key.byteCount+= OvsPacketLenNBL(nbl);
         entry->rev_key.packetCount++;
@@ -226,7 +229,10 @@ OvsCtIncrementCounters(POVS_CT_ENTRY entry, BOOLEAN reply, PNET_BUFFER_LIST nbl)
         entry->key.byteCount += OvsPacketLenNBL(nbl);
         entry->key.packetCount++;
     }
+<<<<<<< HEAD
     NdisReleaseRWLock(entry->lock, &lockState);
+=======
+>>>>>>> custom
 }
 
 static __inline BOOLEAN
@@ -882,15 +888,26 @@ OvsCtExecute_(OvsForwardingContext *fwdCtx,
          * This blocks only new entries from being created and doesn't
          * affect existing connections.
          */
+<<<<<<< HEAD
+=======
+        NdisReleaseRWLock(ovsConntrackLockObj, &lockState);
+>>>>>>> custom
         OVS_LOG_ERROR("Conntrack Limit hit: %lu", ctTotalEntries);
         return NDIS_STATUS_RESOURCES;
     }
 
+<<<<<<< HEAD
     /* Increment stats for the entry if it wasn't tracked previously or
      * if they are on different zones
      */
     if (entry && (entry->key.zone != key->ct.zone ||
            (!(key->ct.state & OVS_CS_F_TRACKED)))) {
+=======
+    /* Increment the counters soon after the lookup, since we set ct.state
+     * to OVS_CS_F_TRACKED after processing the ct entry.
+     */
+    if (entry && (!(key->ct.state & OVS_CS_F_TRACKED))) {
+>>>>>>> custom
         OvsCtIncrementCounters(entry, ctx.reply, curNbl);
     }
 
@@ -951,6 +968,22 @@ OvsCtExecute_(OvsForwardingContext *fwdCtx,
         } else {
             OvsCtUpdateTuple(key, &entry->key);
         }
+<<<<<<< HEAD
+=======
+
+        key->ct.tuple_ipv4.ipv4_src = ctKey->src.addr.ipv4_aligned;
+        key->ct.tuple_ipv4.ipv4_dst = ctKey->dst.addr.ipv4_aligned;
+        key->ct.tuple_ipv4.ipv4_proto = ctKey->nw_proto;
+
+        /* Orig tuple Port is overloaded to take in ICMP-Type & Code */
+        /* This mimics the behavior in lib/conntrack.c*/
+        key->ct.tuple_ipv4.src_port = ctKey->nw_proto != IPPROTO_ICMP ?
+                                      ctKey->src.port :
+                                      htons(ctKey->src.icmp_type);
+        key->ct.tuple_ipv4.dst_port = ctKey->nw_proto != IPPROTO_ICMP ?
+                                      ctKey->dst.port :
+                                      htons(ctKey->src.icmp_code);
+>>>>>>> custom
     }
 
     if (entryCreated) {
@@ -1124,6 +1157,14 @@ OvsConntrackEntryCleaner(PVOID data)
     BOOLEAN success = TRUE;
 
     while (success) {
+<<<<<<< HEAD
+=======
+        if (ovsConntrackLockObj == NULL) {
+            /* Lock has been freed by 'OvsCleanupConntrack()' */
+            break;
+        }
+        NdisAcquireRWLockWrite(ovsConntrackLockObj, &lockState, 0);
+>>>>>>> custom
         if (context->exit) {
             break;
         }

@@ -415,10 +415,17 @@ pop_mpls(struct dp_packet *packet, ovs_be16 ethtype)
 }
 
 void
+<<<<<<< HEAD
 push_nsh(struct dp_packet *packet, const struct nsh_hdr *nsh_hdr_src)
 {
     struct nsh_hdr *nsh;
     size_t length = nsh_hdr_len(nsh_hdr_src);
+=======
+encap_nsh(struct dp_packet *packet, const struct ovs_action_encap_nsh *encap)
+{
+    struct nsh_hdr *nsh;
+    size_t length = NSH_BASE_HDR_LEN + encap->mdlen;
+>>>>>>> custom
     uint8_t next_proto;
 
     switch (ntohl(packet->packet_type)) {
@@ -439,15 +446,42 @@ push_nsh(struct dp_packet *packet, const struct nsh_hdr *nsh_hdr_src)
     }
 
     nsh = (struct nsh_hdr *) dp_packet_push_uninit(packet, length);
+<<<<<<< HEAD
     memcpy(nsh, nsh_hdr_src, length);
     nsh->next_proto = next_proto;
+=======
+    nsh->ver_flags_ttl_len =
+            htons(((encap->flags << NSH_FLAGS_SHIFT) & NSH_FLAGS_MASK)
+                    | (63 << NSH_TTL_SHIFT)
+                    | ((length >> 2) << NSH_LEN_SHIFT));
+    nsh->md_type = (encap->mdtype << NSH_MDTYPE_SHIFT) & NSH_MDTYPE_MASK;
+    nsh->next_proto = next_proto;
+    put_16aligned_be32(&nsh->path_hdr, encap->path_hdr);
+    switch (encap->mdtype) {
+        case NSH_M_TYPE1:
+            nsh->md1 = *ALIGNED_CAST(struct nsh_md1_ctx *, encap->metadata);
+            break;
+        case NSH_M_TYPE2: {
+            /* The MD2 metadata in encap is already padded to 4 bytes. */
+            memcpy(&nsh->md2, encap->metadata, encap->mdlen);
+            break;
+        }
+        default:
+            OVS_NOT_REACHED();
+    }
+
+>>>>>>> custom
     packet->packet_type = htonl(PT_NSH);
     dp_packet_reset_offsets(packet);
     packet->l3_ofs = 0;
 }
 
 bool
+<<<<<<< HEAD
 pop_nsh(struct dp_packet *packet)
+=======
+decap_nsh(struct dp_packet *packet)
+>>>>>>> custom
 {
     struct nsh_hdr *nsh = (struct nsh_hdr *) dp_packet_l3(packet);
     size_t length;

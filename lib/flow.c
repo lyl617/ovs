@@ -126,7 +126,11 @@ struct mf_ctx {
  * away.  Some GCC versions gave warnings on ALWAYS_INLINE, so these are
  * defined as macros. */
 
+<<<<<<< HEAD
 #if (FLOW_WC_SEQ != 41)
+=======
+#if (FLOW_WC_SEQ != 40)
+>>>>>>> custom
 #define MINIFLOW_ASSERT(X) ovs_assert(X)
 BUILD_MESSAGE("FLOW_WC_SEQ changed: miniflow_extract() will have runtime "
                "assertions enabled. Consider updating FLOW_WC_SEQ after "
@@ -530,10 +534,19 @@ parse_ipv6_ext_hdrs(const void **datap, size_t *sizep, uint8_t *nw_proto,
 }
 
 bool
+<<<<<<< HEAD
 parse_nsh(const void **datap, size_t *sizep, struct ovs_key_nsh *key)
 {
     const struct nsh_hdr *nsh = (const struct nsh_hdr *) *datap;
     uint8_t version, length, flags, ttl;
+=======
+parse_nsh(const void **datap, size_t *sizep, struct flow_nsh *key)
+{
+    const struct nsh_hdr *nsh = (const struct nsh_hdr *) *datap;
+    uint16_t ver_flags_len;
+    uint8_t version, length, flags;
+    uint32_t path_hdr;
+>>>>>>> custom
 
     /* Check if it is long enough for NSH header, doesn't support
      * MD type 2 yet
@@ -542,20 +555,42 @@ parse_nsh(const void **datap, size_t *sizep, struct ovs_key_nsh *key)
         return false;
     }
 
+<<<<<<< HEAD
     version = nsh_get_ver(nsh);
     flags = nsh_get_flags(nsh);
     length = nsh_hdr_len(nsh);
     ttl = nsh_get_ttl(nsh);
 
     if (OVS_UNLIKELY(length > *sizep || version != 0)) {
+=======
+    memset(key, 0, sizeof(struct flow_nsh));
+
+    ver_flags_len = ntohs(nsh->ver_flags_ttl_len);
+    version = (ver_flags_len & NSH_VER_MASK) >> NSH_VER_SHIFT;
+    flags = (ver_flags_len & NSH_FLAGS_MASK) >> NSH_FLAGS_SHIFT;
+
+    /* NSH header length is in 4 byte words. */
+    length = ((ver_flags_len & NSH_LEN_MASK) >> NSH_LEN_SHIFT) << 2;
+
+    if (length > *sizep || version != 0) {
+>>>>>>> custom
         return false;
     }
 
     key->flags = flags;
+<<<<<<< HEAD
     key->ttl = ttl;
     key->mdtype = nsh->md_type;
     key->np = nsh->next_proto;
     key->path_hdr = nsh_get_path_hdr(nsh);
+=======
+    key->mdtype = nsh->md_type;
+    key->np = nsh->next_proto;
+
+    path_hdr = ntohl(get_16aligned_be32(&nsh->path_hdr));
+    key->si = (path_hdr & NSH_SI_MASK) >> NSH_SI_SHIFT;
+    key->spi = htonl((path_hdr & NSH_SPI_MASK) >> NSH_SPI_SHIFT);
+>>>>>>> custom
 
     switch (key->mdtype) {
         case NSH_M_TYPE1:
@@ -563,6 +598,7 @@ parse_nsh(const void **datap, size_t *sizep, struct ovs_key_nsh *key)
                 return false;
             }
             for (size_t i = 0; i < 4; i++) {
+<<<<<<< HEAD
                 key->context[i] = get_16aligned_be32(&nsh->md1.context[i]);
             }
             break;
@@ -574,6 +610,12 @@ parse_nsh(const void **datap, size_t *sizep, struct ovs_key_nsh *key)
 
             memset(key->context, 0, sizeof(key->context));
             break;
+=======
+                key->c[i] = get_16aligned_be32(&nsh->md1.c[i]);
+            }
+            break;
+        case NSH_M_TYPE2:
+>>>>>>> custom
         default:
             /* We don't parse other context headers yet. */
             break;
@@ -874,12 +916,28 @@ miniflow_extract(struct dp_packet *packet, struct miniflow *dst)
                 miniflow_pad_to_64(mf, arp_tha);
             }
         } else if (dl_type == htons(ETH_TYPE_NSH)) {
+<<<<<<< HEAD
             struct ovs_key_nsh nsh;
 
             if (OVS_LIKELY(parse_nsh(&data, &size, &nsh))) {
                 miniflow_push_words(mf, nsh, &nsh,
                                     sizeof(struct ovs_key_nsh) /
                                     sizeof(uint64_t));
+=======
+            struct flow_nsh nsh;
+
+            if (OVS_LIKELY(parse_nsh(&data, &size, &nsh))) {
+                if (nsh.mdtype == NSH_M_TYPE1) {
+                    miniflow_push_words(mf, nsh, &nsh,
+                                        sizeof(struct flow_nsh) /
+                                        sizeof(uint64_t));
+                }
+                else if (nsh.mdtype == NSH_M_TYPE2) {
+                    /* parse_nsh has stopped it from arriving here for
+                     * MD type 2, will add MD type 2 support code here later
+                     */
+                }
+>>>>>>> custom
             }
         }
         goto out;
@@ -1014,7 +1072,11 @@ flow_get_metadata(const struct flow *flow, struct match *flow_metadata)
 {
     int i;
 
+<<<<<<< HEAD
     BUILD_ASSERT_DECL(FLOW_WC_SEQ == 41);
+=======
+    BUILD_ASSERT_DECL(FLOW_WC_SEQ == 40);
+>>>>>>> custom
 
     match_init_catchall(flow_metadata);
     if (flow->tunnel.tun_id != htonll(0)) {
@@ -1593,7 +1655,11 @@ flow_wildcards_init_for_packet(struct flow_wildcards *wc,
     memset(&wc->masks, 0x0, sizeof wc->masks);
 
     /* Update this function whenever struct flow changes. */
+<<<<<<< HEAD
     BUILD_ASSERT_DECL(FLOW_WC_SEQ == 41);
+=======
+    BUILD_ASSERT_DECL(FLOW_WC_SEQ == 40);
+>>>>>>> custom
 
     if (flow_tnl_dst_is_set(&flow->tunnel)) {
         if (flow->tunnel.flags & FLOW_TNL_F_KEY) {
@@ -1698,11 +1764,19 @@ flow_wildcards_init_for_packet(struct flow_wildcards *wc,
         return;
     } else if (flow->dl_type == htons(ETH_TYPE_NSH)) {
         WC_MASK_FIELD(wc, nsh.flags);
+<<<<<<< HEAD
         WC_MASK_FIELD(wc, nsh.ttl);
         WC_MASK_FIELD(wc, nsh.mdtype);
         WC_MASK_FIELD(wc, nsh.np);
         WC_MASK_FIELD(wc, nsh.path_hdr);
         WC_MASK_FIELD(wc, nsh.context);
+=======
+        WC_MASK_FIELD(wc, nsh.mdtype);
+        WC_MASK_FIELD(wc, nsh.np);
+        WC_MASK_FIELD(wc, nsh.spi);
+        WC_MASK_FIELD(wc, nsh.si);
+        WC_MASK_FIELD(wc, nsh.c);
+>>>>>>> custom
     } else {
         return; /* Unknown ethertype. */
     }
@@ -1744,7 +1818,11 @@ void
 flow_wc_map(const struct flow *flow, struct flowmap *map)
 {
     /* Update this function whenever struct flow changes. */
+<<<<<<< HEAD
     BUILD_ASSERT_DECL(FLOW_WC_SEQ == 41);
+=======
+    BUILD_ASSERT_DECL(FLOW_WC_SEQ == 40);
+>>>>>>> custom
 
     flowmap_init(map);
 
@@ -1834,8 +1912,14 @@ flow_wc_map(const struct flow *flow, struct flowmap *map)
         FLOWMAP_SET(map, nsh.flags);
         FLOWMAP_SET(map, nsh.mdtype);
         FLOWMAP_SET(map, nsh.np);
+<<<<<<< HEAD
         FLOWMAP_SET(map, nsh.path_hdr);
         FLOWMAP_SET(map, nsh.context);
+=======
+        FLOWMAP_SET(map, nsh.spi);
+        FLOWMAP_SET(map, nsh.si);
+        FLOWMAP_SET(map, nsh.c);
+>>>>>>> custom
     }
 }
 
@@ -1845,7 +1929,11 @@ void
 flow_wildcards_clear_non_packet_fields(struct flow_wildcards *wc)
 {
     /* Update this function whenever struct flow changes. */
+<<<<<<< HEAD
     BUILD_ASSERT_DECL(FLOW_WC_SEQ == 41);
+=======
+    BUILD_ASSERT_DECL(FLOW_WC_SEQ == 40);
+>>>>>>> custom
 
     memset(&wc->masks.metadata, 0, sizeof wc->masks.metadata);
     memset(&wc->masks.regs, 0, sizeof wc->masks.regs);
@@ -1989,7 +2077,11 @@ flow_wildcards_set_xxreg_mask(struct flow_wildcards *wc, int idx,
 uint32_t
 miniflow_hash_5tuple(const struct miniflow *flow, uint32_t basis)
 {
+<<<<<<< HEAD
     BUILD_ASSERT_DECL(FLOW_WC_SEQ == 41);
+=======
+    BUILD_ASSERT_DECL(FLOW_WC_SEQ == 40);
+>>>>>>> custom
     uint32_t hash = basis;
 
     if (flow) {
@@ -2036,7 +2128,11 @@ ASSERT_SEQUENTIAL(ipv6_src, ipv6_dst);
 uint32_t
 flow_hash_5tuple(const struct flow *flow, uint32_t basis)
 {
+<<<<<<< HEAD
     BUILD_ASSERT_DECL(FLOW_WC_SEQ == 41);
+=======
+    BUILD_ASSERT_DECL(FLOW_WC_SEQ == 40);
+>>>>>>> custom
     uint32_t hash = basis;
 
     if (flow) {
@@ -2664,7 +2760,11 @@ flow_push_mpls(struct flow *flow, int n, ovs_be16 mpls_eth_type,
 
         if (clear_flow_L3) {
             /* Clear all L3 and L4 fields and dp_hash. */
+<<<<<<< HEAD
             BUILD_ASSERT(FLOW_WC_SEQ == 41);
+=======
+            BUILD_ASSERT(FLOW_WC_SEQ == 40);
+>>>>>>> custom
             memset((char *) flow + FLOW_SEGMENT_2_ENDS_AT, 0,
                    sizeof(struct flow) - FLOW_SEGMENT_2_ENDS_AT);
             flow->dp_hash = 0;

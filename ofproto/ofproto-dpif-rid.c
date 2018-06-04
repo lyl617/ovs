@@ -162,7 +162,10 @@ frozen_state_equal(const struct frozen_state *a, const struct frozen_state *b)
                              b->ofpacts, b->ofpacts_len)
             && ofpacts_equal(a->action_set, a->action_set_len,
                              b->action_set, b->action_set_len)
+<<<<<<< HEAD
             && !memcmp(a->userdata, b->userdata, a->userdata_len)
+=======
+>>>>>>> custom
             && uuid_equals(&a->xport_uuid, &b->xport_uuid));
 }
 

@@ -371,21 +371,34 @@ mf_is_all_wild(const struct mf_field *mf, const struct flow_wildcards *wc)
 
     case MFF_NSH_FLAGS:
         return !wc->masks.nsh.flags;
+<<<<<<< HEAD
     case MFF_NSH_TTL:
         return !wc->masks.nsh.ttl;
+=======
+>>>>>>> custom
     case MFF_NSH_MDTYPE:
         return !wc->masks.nsh.mdtype;
     case MFF_NSH_NP:
         return !wc->masks.nsh.np;
     case MFF_NSH_SPI:
+<<<<<<< HEAD
         return !(wc->masks.nsh.path_hdr & htonl(NSH_SPI_MASK));
     case MFF_NSH_SI:
         return !(wc->masks.nsh.path_hdr & htonl(NSH_SI_MASK));
+=======
+        return !wc->masks.nsh.spi;
+    case MFF_NSH_SI:
+        return !wc->masks.nsh.si;
+>>>>>>> custom
     case MFF_NSH_C1:
     case MFF_NSH_C2:
     case MFF_NSH_C3:
     case MFF_NSH_C4:
+<<<<<<< HEAD
         return !wc->masks.nsh.context[mf->id - MFF_NSH_C1];
+=======
+        return !wc->masks.nsh.c[mf->id - MFF_NSH_C1];
+>>>>>>> custom
 
     case MFF_N_IDS:
     default:
@@ -622,8 +635,11 @@ mf_is_value_valid(const struct mf_field *mf, const union mf_value *value)
 
     case MFF_NSH_FLAGS:
         return true;
+<<<<<<< HEAD
     case MFF_NSH_TTL:
         return (value->u8 <= 63);
+=======
+>>>>>>> custom
     case MFF_NSH_MDTYPE:
         return (value->u8 == 1 || value->u8 == 2);
     case MFF_NSH_NP:
@@ -929,9 +945,12 @@ mf_get_value(const struct mf_field *mf, const struct flow *flow,
     case MFF_NSH_FLAGS:
         value->u8 = flow->nsh.flags;
         break;
+<<<<<<< HEAD
     case MFF_NSH_TTL:
         value->u8 = flow->nsh.ttl;
         break;
+=======
+>>>>>>> custom
     case MFF_NSH_MDTYPE:
         value->u8 = flow->nsh.mdtype;
         break;
@@ -939,6 +958,7 @@ mf_get_value(const struct mf_field *mf, const struct flow *flow,
         value->u8 = flow->nsh.np;
         break;
     case MFF_NSH_SPI:
+<<<<<<< HEAD
         value->be32 = nsh_path_hdr_to_spi(flow->nsh.path_hdr);
         if (value->be32 == htonl(NSH_SPI_MASK >> NSH_SPI_SHIFT)) {
             value->be32 = OVS_BE32_MAX;
@@ -946,12 +966,22 @@ mf_get_value(const struct mf_field *mf, const struct flow *flow,
         break;
     case MFF_NSH_SI:
         value->u8 = nsh_path_hdr_to_si(flow->nsh.path_hdr);
+=======
+        value->be32 = flow->nsh.spi;
+        break;
+    case MFF_NSH_SI:
+        value->u8 = flow->nsh.si;
+>>>>>>> custom
         break;
     case MFF_NSH_C1:
     case MFF_NSH_C2:
     case MFF_NSH_C3:
     case MFF_NSH_C4:
+<<<<<<< HEAD
         value->be32 = flow->nsh.context[mf->id - MFF_NSH_C1];
+=======
+        value->be32 = flow->nsh.c[mf->id - MFF_NSH_C1];
+>>>>>>> custom
         break;
 
     case MFF_N_IDS:
@@ -1262,9 +1292,12 @@ mf_set_value(const struct mf_field *mf,
     case MFF_NSH_FLAGS:
         MATCH_SET_FIELD_UINT8(match, nsh.flags, value->u8);
         break;
+<<<<<<< HEAD
     case MFF_NSH_TTL:
         MATCH_SET_FIELD_UINT8(match, nsh.ttl, value->u8);
         break;
+=======
+>>>>>>> custom
     case MFF_NSH_MDTYPE:
         MATCH_SET_FIELD_UINT8(match, nsh.mdtype, value->u8);
         break;
@@ -1272,19 +1305,30 @@ mf_set_value(const struct mf_field *mf,
         MATCH_SET_FIELD_UINT8(match, nsh.np, value->u8);
         break;
     case MFF_NSH_SPI:
+<<<<<<< HEAD
         match->wc.masks.nsh.path_hdr |= htonl(NSH_SPI_MASK);
         nsh_path_hdr_set_spi(&match->flow.nsh.path_hdr, value->be32);
         break;
     case MFF_NSH_SI:
         match->wc.masks.nsh.path_hdr |= htonl(NSH_SI_MASK);
         nsh_path_hdr_set_si(&match->flow.nsh.path_hdr, value->u8);
+=======
+        MATCH_SET_FIELD_BE32(match, nsh.spi, value->be32);
+        break;
+    case MFF_NSH_SI:
+        MATCH_SET_FIELD_UINT8(match, nsh.si, value->u8);
+>>>>>>> custom
         break;
     case MFF_NSH_C1:
     case MFF_NSH_C2:
     case MFF_NSH_C3:
     case MFF_NSH_C4:
+<<<<<<< HEAD
         MATCH_SET_FIELD_BE32(match, nsh.context[mf->id - MFF_NSH_C1],
                              value->be32);
+=======
+        MATCH_SET_FIELD_BE32(match, nsh.c[mf->id - MFF_NSH_C1], value->be32);
+>>>>>>> custom
         break;
 
     case MFF_N_IDS:
@@ -1671,9 +1715,12 @@ mf_set_flow_value(const struct mf_field *mf,
     case MFF_NSH_FLAGS:
         flow->nsh.flags = value->u8;
         break;
+<<<<<<< HEAD
     case MFF_NSH_TTL:
         flow->nsh.ttl = value->u8;
         break;
+=======
+>>>>>>> custom
     case MFF_NSH_MDTYPE:
         flow->nsh.mdtype = value->u8;
         break;
@@ -1681,16 +1728,27 @@ mf_set_flow_value(const struct mf_field *mf,
         flow->nsh.np = value->u8;
         break;
     case MFF_NSH_SPI:
+<<<<<<< HEAD
         nsh_path_hdr_set_spi(&flow->nsh.path_hdr, value->be32);
         break;
     case MFF_NSH_SI:
         nsh_path_hdr_set_si(&flow->nsh.path_hdr, value->u8);
+=======
+        flow->nsh.spi = value->be32;
+        break;
+    case MFF_NSH_SI:
+        flow->nsh.si = value->u8;
+>>>>>>> custom
         break;
     case MFF_NSH_C1:
     case MFF_NSH_C2:
     case MFF_NSH_C3:
     case MFF_NSH_C4:
+<<<<<<< HEAD
         flow->nsh.context[mf->id - MFF_NSH_C1] = value->be32;
+=======
+        flow->nsh.c[mf->id - MFF_NSH_C1] = value->be32;
+>>>>>>> custom
         break;
 
     case MFF_N_IDS:
@@ -1824,7 +1882,10 @@ mf_is_pipeline_field(const struct mf_field *mf)
     case MFF_ND_SLL:
     case MFF_ND_TLL:
     case MFF_NSH_FLAGS:
+<<<<<<< HEAD
     case MFF_NSH_TTL:
+=======
+>>>>>>> custom
     case MFF_NSH_MDTYPE:
     case MFF_NSH_NP:
     case MFF_NSH_SPI:
@@ -2182,9 +2243,12 @@ mf_set_wild(const struct mf_field *mf, struct match *match, char **err_str)
     case MFF_NSH_FLAGS:
         MATCH_SET_FIELD_MASKED(match, nsh.flags, 0, 0);
         break;
+<<<<<<< HEAD
     case MFF_NSH_TTL:
         MATCH_SET_FIELD_MASKED(match, nsh.ttl, 0, 0);
         break;
+=======
+>>>>>>> custom
     case MFF_NSH_MDTYPE:
         MATCH_SET_FIELD_MASKED(match, nsh.mdtype, 0, 0);
         break;
@@ -2192,18 +2256,29 @@ mf_set_wild(const struct mf_field *mf, struct match *match, char **err_str)
         MATCH_SET_FIELD_MASKED(match, nsh.np, 0, 0);
         break;
     case MFF_NSH_SPI:
+<<<<<<< HEAD
         match->wc.masks.nsh.path_hdr &= ~htonl(NSH_SPI_MASK);
         nsh_path_hdr_set_spi(&match->flow.nsh.path_hdr, htonl(0));
         break;
     case MFF_NSH_SI:
         match->wc.masks.nsh.path_hdr &= ~htonl(NSH_SI_MASK);
         nsh_path_hdr_set_si(&match->flow.nsh.path_hdr, 0);
+=======
+        MATCH_SET_FIELD_MASKED(match, nsh.spi, htonl(0), htonl(0));
+        break;
+    case MFF_NSH_SI:
+        MATCH_SET_FIELD_MASKED(match, nsh.si, 0, 0);
+>>>>>>> custom
         break;
     case MFF_NSH_C1:
     case MFF_NSH_C2:
     case MFF_NSH_C3:
     case MFF_NSH_C4:
+<<<<<<< HEAD
         MATCH_SET_FIELD_MASKED(match, nsh.context[mf->id - MFF_NSH_C1],
+=======
+        MATCH_SET_FIELD_MASKED(match, nsh.c[mf->id - MFF_NSH_C1],
+>>>>>>> custom
                                htonl(0), htonl(0));
         break;
 
@@ -2460,9 +2535,12 @@ mf_set(const struct mf_field *mf,
     case MFF_NSH_FLAGS:
         MATCH_SET_FIELD_MASKED(match, nsh.flags, value->u8, mask->u8);
         break;
+<<<<<<< HEAD
     case MFF_NSH_TTL:
         MATCH_SET_FIELD_MASKED(match, nsh.ttl, value->u8, mask->u8);
         break;
+=======
+>>>>>>> custom
     case MFF_NSH_MDTYPE:
         MATCH_SET_FIELD_MASKED(match, nsh.mdtype, value->u8, mask->u8);
         break;
@@ -2470,6 +2548,7 @@ mf_set(const struct mf_field *mf,
         MATCH_SET_FIELD_MASKED(match, nsh.np, value->u8, mask->u8);
         break;
     case MFF_NSH_SPI:
+<<<<<<< HEAD
         match->wc.masks.nsh.path_hdr |= mask->be32;
         nsh_path_hdr_set_spi(&match->flow.nsh.path_hdr,
                              value->be32 & mask->be32);
@@ -2478,12 +2557,22 @@ mf_set(const struct mf_field *mf,
         match->wc.masks.nsh.path_hdr |= htonl(mask->u8);
         nsh_path_hdr_set_si(&match->flow.nsh.path_hdr,
                              value->u8 & mask->u8);
+=======
+        MATCH_SET_FIELD_MASKED(match, nsh.spi, value->be32, mask->be32);
+        break;
+    case MFF_NSH_SI:
+        MATCH_SET_FIELD_MASKED(match, nsh.si, value->u8, mask->u8);
+>>>>>>> custom
         break;
     case MFF_NSH_C1:
     case MFF_NSH_C2:
     case MFF_NSH_C3:
     case MFF_NSH_C4:
+<<<<<<< HEAD
         MATCH_SET_FIELD_MASKED(match, nsh.context[mf->id - MFF_NSH_C1],
+=======
+        MATCH_SET_FIELD_MASKED(match, nsh.c[mf->id - MFF_NSH_C1],
+>>>>>>> custom
                                value->be32, mask->be32);
         break;
 

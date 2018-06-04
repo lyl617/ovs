@@ -1272,14 +1272,23 @@ dpif_execute_helper_cb(void *aux_, struct dp_packet_batch *packets_,
     case OVS_ACTION_ATTR_PUSH_ETH:
     case OVS_ACTION_ATTR_POP_ETH:
     case OVS_ACTION_ATTR_CLONE:
+<<<<<<< HEAD
     case OVS_ACTION_ATTR_PUSH_NSH:
     case OVS_ACTION_ATTR_POP_NSH:
     case OVS_ACTION_ATTR_CT_CLEAR:
+=======
+    case OVS_ACTION_ATTR_ENCAP_NSH:
+    case OVS_ACTION_ATTR_DECAP_NSH:
+>>>>>>> custom
     case OVS_ACTION_ATTR_UNSPEC:
     case __OVS_ACTION_ATTR_MAX:
         OVS_NOT_REACHED();
     }
+<<<<<<< HEAD
     dp_packet_delete_batch(packets_, should_steal);
+=======
+    dp_packet_delete_batch(packets_, may_steal);
+>>>>>>> custom
 }
 
 /* Executes 'execute' by performing most of the actions in userspace and

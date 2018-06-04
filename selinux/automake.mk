@@ -7,6 +7,7 @@
 
 EXTRA_DIST += \
         selinux/openvswitch-custom.te.in
+<<<<<<< HEAD
 
 PHONY: selinux-policy
 
@@ -18,3 +19,5 @@ CLEANFILES += \
 	selinux/openvswitch-custom.pp \
 	selinux/openvswitch-custom.fc \
 	selinux/openvswitch-custom.if
+=======
+>>>>>>> custom

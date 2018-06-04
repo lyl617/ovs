@@ -152,6 +152,7 @@ ovn-nbctl lsp-set-options S1-R1 router-port=R1-S1
 AT_CHECK([test x`ovn-nbctl lsp-get-up S1-R1` = xup])
 
 AT_CLEANUP
+<<<<<<< HEAD
 
 AT_SETUP([ovn -- check IPv6 RA config propagation to SBDB])
 ovn_start
@@ -301,3 +302,5 @@ as northd
 OVS_APP_EXIT_AND_WAIT([ovn-northd])
 
 AT_CLEANUP
+=======
+>>>>>>> custom

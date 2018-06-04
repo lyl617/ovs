@@ -1328,6 +1328,7 @@ format_ct_label_masked(struct ds *s, const ovs_u128 *key, const ovs_u128 *mask)
 static void
 format_nsh_masked(struct ds *s, const struct flow *f, const struct flow *m)
 {
+<<<<<<< HEAD
     ovs_be32 spi_mask = nsh_path_hdr_to_spi(m->nsh.path_hdr);
     if (spi_mask == htonl(NSH_SPI_MASK >> NSH_SPI_SHIFT)) {
         spi_mask = OVS_BE32_MAX;
@@ -1350,6 +1351,18 @@ format_nsh_masked(struct ds *s, const struct flow *f, const struct flow *m)
                                m->nsh.context[2]);
         format_be32_masked_hex(s, "nsh_c4", f->nsh.context[3],
                                m->nsh.context[3]);
+=======
+    format_uint8_masked(s, "nsh_flags", f->nsh.flags, m->nsh.flags);
+    format_uint8_masked(s, "nsh_mdtype", f->nsh.mdtype, m->nsh.mdtype);
+    format_uint8_masked(s, "nsh_np", f->nsh.np, m->nsh.np);
+    format_be32_masked_hex(s, "nsh_spi", f->nsh.spi, m->nsh.spi);
+    format_uint8_masked(s, "nsh_si", f->nsh.si, m->nsh.si);
+    if (m->nsh.mdtype == UINT8_MAX && f->nsh.mdtype == NSH_M_TYPE1) {
+        format_be32_masked_hex(s, "nsh_c1", f->nsh.c[0], m->nsh.c[0]);
+        format_be32_masked_hex(s, "nsh_c2", f->nsh.c[1], m->nsh.c[1]);
+        format_be32_masked_hex(s, "nsh_c3", f->nsh.c[2], m->nsh.c[2]);
+        format_be32_masked_hex(s, "nsh_c4", f->nsh.c[3], m->nsh.c[3]);
+>>>>>>> custom
     }
 }
 
@@ -1370,7 +1383,11 @@ match_format(const struct match *match,
     bool is_megaflow = false;
     int i;
 
+<<<<<<< HEAD
     BUILD_ASSERT_DECL(FLOW_WC_SEQ == 41);
+=======
+    BUILD_ASSERT_DECL(FLOW_WC_SEQ == 40);
+>>>>>>> custom
 
     if (priority != OFP_DEFAULT_PRIORITY) {
         ds_put_format(s, "%spriority=%s%d,",

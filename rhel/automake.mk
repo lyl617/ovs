@@ -31,7 +31,10 @@ EXTRA_DIST += \
 	rhel/usr_lib_systemd_system_openvswitch.service \
 	rhel/usr_lib_systemd_system_ovsdb-server.service \
 	rhel/usr_lib_systemd_system_ovs-vswitchd.service.in \
+<<<<<<< HEAD
 	rhel/usr_lib_systemd_system_ovs-delete-transient-ports.service \
+=======
+>>>>>>> custom
 	rhel/usr_lib_systemd_system_ovn-controller.service \
 	rhel/usr_lib_systemd_system_ovn-controller-vtep.service \
 	rhel/usr_lib_systemd_system_ovn-northd.service \

@@ -1403,6 +1403,7 @@ nl_msg_put_flower_acts(struct ofpbuf *request, struct tc_flower *flower)
             nl_msg_put_act_tunnel_key_release(request);
             nl_msg_end_nested(request, act_offset);
         }
+<<<<<<< HEAD
 
         action = flower->actions;
         for (i = 0; i < flower->action_count; i++, action++) {
@@ -1467,6 +1468,40 @@ nl_msg_put_flower_acts(struct ofpbuf *request, struct tc_flower *flower)
             }
             break;
             }
+=======
+        if (flower->set.set) {
+            act_offset = nl_msg_start_nested(request, act_index++);
+            nl_msg_put_act_tunnel_key_set(request, flower->set.id,
+                                          flower->set.ipv4.ipv4_src,
+                                          flower->set.ipv4.ipv4_dst,
+                                          &flower->set.ipv6.ipv6_src,
+                                          &flower->set.ipv6.ipv6_dst,
+                                          flower->set.tp_dst);
+            nl_msg_end_nested(request, act_offset);
+        }
+        if (flower->vlan_pop) {
+            act_offset = nl_msg_start_nested(request, act_index++);
+            nl_msg_put_act_pop_vlan(request);
+            nl_msg_end_nested(request, act_offset);
+        }
+        if (flower->vlan_push_id) {
+            act_offset = nl_msg_start_nested(request, act_index++);
+            nl_msg_put_act_push_vlan(request,
+                                     flower->vlan_push_id,
+                                     flower->vlan_push_prio);
+            nl_msg_end_nested(request, act_offset);
+        }
+        if (flower->ifindex_out) {
+            act_offset = nl_msg_start_nested(request, act_index++);
+            nl_msg_put_act_redirect(request, flower->ifindex_out);
+            nl_msg_put_act_cookie(request, &flower->act_cookie);
+            nl_msg_end_nested(request, act_offset);
+        } else {
+            act_offset = nl_msg_start_nested(request, act_index++);
+            nl_msg_put_act_drop(request);
+            nl_msg_put_act_cookie(request, &flower->act_cookie);
+            nl_msg_end_nested(request, act_offset);
+>>>>>>> custom
         }
     }
     if (!ifindex) {

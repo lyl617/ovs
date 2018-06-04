@@ -819,7 +819,127 @@ ovsdb_idl_run(struct ovsdb_idl *idl)
         if (!msg) {
             break;
         }
+<<<<<<< HEAD
         ovsdb_idl_process_msg(idl, msg);
+=======
+
+        if (msg->type == JSONRPC_NOTIFY
+            && !strcmp(msg->method, "update2")
+            && msg->params->type == JSON_ARRAY
+            && msg->params->u.array.n == 2
+            && msg->params->u.array.elems[0]->type == JSON_STRING) {
+            /* Database contents changed. */
+            ovsdb_idl_parse_update(idl, msg->params->u.array.elems[1],
+                                   OVSDB_UPDATE2);
+        } else if (msg->type == JSONRPC_REPLY
+                   && idl->request_id
+                   && json_equal(idl->request_id, msg->id)) {
+            json_destroy(idl->request_id);
+            idl->request_id = NULL;
+
+            switch (idl->state) {
+            case IDL_S_SCHEMA_REQUESTED:
+                /* Reply to our "get_schema" request. */
+                idl->schema = json_clone(msg->result);
+                ovsdb_idl_send_monitor_cond_request(idl);
+                idl->state = IDL_S_MONITOR_COND_REQUESTED;
+                break;
+
+            case IDL_S_MONITOR_REQUESTED:
+            case IDL_S_MONITOR_COND_REQUESTED:
+                /* Reply to our "monitor" or "monitor_cond" request. */
+                idl->change_seqno++;
+                ovsdb_idl_clear(idl);
+                if (idl->state == IDL_S_MONITOR_REQUESTED) {
+                    idl->state = IDL_S_MONITORING;
+                    ovsdb_idl_parse_update(idl, msg->result, OVSDB_UPDATE);
+                } else { /* IDL_S_MONITOR_COND_REQUESTED. */
+                    idl->state = IDL_S_MONITORING_COND;
+                    ovsdb_idl_parse_update(idl, msg->result, OVSDB_UPDATE2);
+                }
+
+                /* Schema is not useful after monitor request is accepted
+                 * by the server.  */
+                json_destroy(idl->schema);
+                idl->schema = NULL;
+                break;
+
+            case IDL_S_MONITORING_COND:
+                /* Conditional monitor clauses were updated. Send out
+                 * the next condition changes, in any, immediately. */
+                ovsdb_idl_send_cond_change(idl);
+                idl->cond_seqno++;
+                break;
+
+            case IDL_S_MONITORING:
+            case IDL_S_NO_SCHEMA:
+            default:
+                OVS_NOT_REACHED();
+            }
+        } else if (msg->type == JSONRPC_NOTIFY
+                   && !strcmp(msg->method, "update")
+                   && msg->params->type == JSON_ARRAY
+                   && msg->params->u.array.n == 2
+                   && msg->params->u.array.elems[0]->type == JSON_STRING) {
+            /* Database contents changed. */
+            ovsdb_idl_parse_update(idl, msg->params->u.array.elems[1],
+                                   OVSDB_UPDATE);
+        } else if (msg->type == JSONRPC_REPLY
+                   && idl->lock_request_id
+                   && json_equal(idl->lock_request_id, msg->id)) {
+            /* Reply to our "lock" request. */
+            ovsdb_idl_parse_lock_reply(idl, msg->result);
+        } else if (msg->type == JSONRPC_NOTIFY
+                   && !strcmp(msg->method, "locked")) {
+            /* We got our lock. */
+            ovsdb_idl_parse_lock_notify(idl, msg->params, true);
+        } else if (msg->type == JSONRPC_NOTIFY
+                   && !strcmp(msg->method, "stolen")) {
+            /* Someone else stole our lock. */
+            ovsdb_idl_parse_lock_notify(idl, msg->params, false);
+        } else if (msg->type == JSONRPC_ERROR
+                   && idl->state == IDL_S_MONITOR_COND_REQUESTED
+                   && idl->request_id
+                   && json_equal(idl->request_id, msg->id)) {
+            if (msg->error && msg->error->type == JSON_STRING
+                && !strcmp(json_string(msg->error), "unknown method")) {
+                /* Fall back to using "monitor" method.  */
+                json_destroy(idl->request_id);
+                idl->request_id = NULL;
+                ovsdb_idl_send_monitor_request(idl);
+                idl->state = IDL_S_MONITOR_REQUESTED;
+            }
+        } else if (msg->type == JSONRPC_ERROR
+                   && idl->state == IDL_S_MONITORING_COND
+                   && idl->request_id
+                   && json_equal(idl->request_id, msg->id)) {
+            json_destroy(idl->request_id);
+            idl->request_id = NULL;
+            VLOG_ERR("%s: conditional monitor update failed",
+                     jsonrpc_session_get_name(idl->session));
+            idl->state = IDL_S_NO_SCHEMA;
+        } else if (msg->type == JSONRPC_ERROR
+                   && idl->state == IDL_S_SCHEMA_REQUESTED
+                   && idl->request_id
+                   && json_equal(idl->request_id, msg->id)) {
+            json_destroy(idl->request_id);
+            idl->request_id = NULL;
+            VLOG_ERR("%s: requested schema not found",
+                     jsonrpc_session_get_name(idl->session));
+            idl->state = IDL_S_NO_SCHEMA;
+        } else if ((msg->type == JSONRPC_ERROR
+                    || msg->type == JSONRPC_REPLY)
+                   && ovsdb_idl_txn_process_reply(idl, msg)) {
+            /* ovsdb_idl_txn_process_reply() did everything needful. */
+        } else {
+            /* This can happen if ovsdb_idl_txn_destroy() is called to destroy
+             * a transaction before we receive the reply, so keep the log level
+             * low. */
+            VLOG_DBG("%s: received unexpected %s message",
+                     jsonrpc_session_get_name(idl->session),
+                     jsonrpc_msg_type_to_string(msg->type));
+        }
+>>>>>>> custom
         jsonrpc_msg_destroy(msg);
     }
     ovsdb_idl_row_destroy_postprocess(&idl->data);

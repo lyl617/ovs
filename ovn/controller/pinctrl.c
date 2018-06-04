@@ -1081,6 +1081,7 @@ pinctrl_handle_dns_lookup(
     } else {
         struct ovs_16aligned_ip6_hdr *nh = dp_packet_l3(&pkt_out);
         nh->ip6_plen = htons(new_l4_size);
+<<<<<<< HEAD
 
         /* IPv6 needs UDP checksum calculated */
         uint32_t csum;
@@ -1092,6 +1093,8 @@ pinctrl_handle_dns_lookup(
         if (!out_udp->udp_csum) {
             out_udp->udp_csum = htons(0xffff);
         }
+=======
+>>>>>>> custom
     }
 
     pin->packet = dp_packet_data(&pkt_out);
@@ -1255,7 +1258,11 @@ pinctrl_run(struct controller_ctx *ctx,
     }
 
     if (conn_seq_no != rconn_get_connection_seqno(swconn)) {
+<<<<<<< HEAD
         pinctrl_setup();
+=======
+        pinctrl_setup(swconn);
+>>>>>>> custom
         conn_seq_no = rconn_get_connection_seqno(swconn);
         flush_put_mac_bindings();
     }

@@ -68,10 +68,18 @@ struct nat_conn_key_node {
  * connection. The expectation is created by the control
  * connection. */
 struct alg_exp_node {
+<<<<<<< HEAD
     /* Node in alg_expectations. */
     struct hmap_node node;
     /* Node in alg_expectation_refs. */
     struct hindex_node node_ref;
+=======
+    struct hmap_node node;
+    /* Expiry list node for an expectation. */
+    struct ovs_list exp_node;
+    /* The time when this expectation will expire. */
+    long long expiration;
+>>>>>>> custom
     /* Key of data connection to be created. */
     struct conn_key key;
     /* Corresponding key of the control connection. */
@@ -82,9 +90,15 @@ struct alg_exp_node {
      * connection label and mark. */
     ovs_u128 master_label;
     uint32_t master_mark;
+<<<<<<< HEAD
     /* True if for NAT application, the alg replaces the dest address;
      * otherwise, the source address is replaced.  */
     bool nat_rpl_dst;
+=======
+    /* True if the expectation is for passive mode, as is
+     * one option for FTP. */
+    bool passive_mode;
+>>>>>>> custom
 };
 
 struct conn {

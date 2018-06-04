@@ -173,10 +173,17 @@ add_logical_flows(struct controller_ctx *ctx,
     SBREC_LOGICAL_FLOW_FOR_EACH (lflow, ctx->ovnsb_idl) {
         consider_logical_flow(ctx, chassis_index,
                               lflow, local_datapaths,
+<<<<<<< HEAD
                               group_table, meter_table, chassis,
                               &dhcp_opts, &dhcpv6_opts, &nd_ra_opts,
                               &conj_id_ofs, addr_sets, port_groups,
                               flow_table, active_tunnels, local_lport_ids);
+=======
+                              group_table, chassis,
+                              &dhcp_opts, &dhcpv6_opts, &conj_id_ofs,
+                              addr_sets, flow_table, active_tunnels,
+                              local_lport_ids);
+>>>>>>> custom
     }
 
     dhcp_opts_destroy(&dhcp_opts);
@@ -455,9 +462,14 @@ lflow_run(struct controller_ctx *ctx,
     COVERAGE_INC(lflow_run);
 
     add_logical_flows(ctx, chassis_index, local_datapaths,
+<<<<<<< HEAD
                       group_table, meter_table, chassis, addr_sets,
                       port_groups, flow_table, active_tunnels,
                       local_lport_ids);
+=======
+                      group_table, chassis, addr_sets, flow_table,
+                      active_tunnels, local_lport_ids);
+>>>>>>> custom
     add_neighbor_flows(ctx, flow_table);
 }
 

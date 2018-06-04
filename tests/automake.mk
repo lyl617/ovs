@@ -178,7 +178,11 @@ GENHTML_OPTS = -q --branch-coverage --num-spaces 4
 check-lcov: all $(check_DATA) clean-lcov
 	find . -name '*.gcda' | xargs -n1 rm -f
 	-set $(SHELL) '$(TESTSUITE)' -C tests AUTOTEST_PATH=$(AUTOTEST_PATH) $(TESTSUITEFLAGS); \
+<<<<<<< HEAD
 	"$$@" || (test X'$(RECHECK)' = Xyes && "$$@" -j1 --recheck)
+=======
+	"$$@" || (test X'$(RECHECK)' = Xyes && "$$@" --recheck)
+>>>>>>> custom
 	$(MKDIR_P) tests/lcov
 	lcov $(LCOV_OPTS) -o tests/lcov/coverage.info
 	genhtml $(GENHTML_OPTS) -o tests/lcov tests/lcov/coverage.info

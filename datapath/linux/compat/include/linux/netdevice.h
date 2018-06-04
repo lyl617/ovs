@@ -102,6 +102,7 @@ static inline int rpl_netdev_master_upper_dev_link(struct net_device *dev,
 	return netdev_master_upper_dev_link(dev, upper_dev);
 }
 #define netdev_master_upper_dev_link rpl_netdev_master_upper_dev_link
+<<<<<<< HEAD
 #else /* #ifndef HAVE_NETDEV_MASTER_UPPER_DEV_LINK_RH */
 static inline int rpl_netdev_master_upper_dev_link(struct net_device *dev,
 					       struct net_device *upper_dev,
@@ -127,6 +128,11 @@ static inline int rpl_netdev_master_upper_dev_link(struct net_device *dev,
 #define netdev_master_upper_dev_link rpl_netdev_master_upper_dev_link
 #endif /* #ifndef HAVE_UPPER_DEV_LINK_EXTACK */
 #endif /* #else HAVE_NETDEV_MASTER_UPPER_DEV_LINK_PRIV */
+=======
+
+#endif
+#endif
+>>>>>>> custom
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
 #define dev_queue_xmit rpl_dev_queue_xmit

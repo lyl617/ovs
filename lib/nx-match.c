@@ -1026,7 +1026,11 @@ nx_put_raw(struct ofpbuf *b, enum ofp_version oxm, const struct match *match,
     ovs_be32 spi_mask;
     int match_len;
 
+<<<<<<< HEAD
     BUILD_ASSERT_DECL(FLOW_WC_SEQ == 41);
+=======
+    BUILD_ASSERT_DECL(FLOW_WC_SEQ == 40);
+>>>>>>> custom
 
     struct nxm_put_ctx ctx = { .output = b, .implied_ethernet = false };
 
@@ -1155,6 +1159,7 @@ nx_put_raw(struct ofpbuf *b, enum ofp_version oxm, const struct match *match,
                flow->tunnel.gbp_flags, match->wc.masks.tunnel.gbp_flags);
     tun_metadata_to_nx_match(b, oxm, match);
 
+<<<<<<< HEAD
     /* ERSPAN */
     nxm_put_32m(&ctx, MFF_TUN_ERSPAN_IDX, oxm,
                 htonl(flow->tunnel.erspan_idx),
@@ -1171,10 +1176,16 @@ nx_put_raw(struct ofpbuf *b, enum ofp_version oxm, const struct match *match,
             match->wc.masks.nsh.flags);
     nxm_put_8m(&ctx, MFF_NSH_TTL, oxm, flow->nsh.ttl,
             match->wc.masks.nsh.ttl);
+=======
+    /* Network Service Header */
+    nxm_put_8m(&ctx, MFF_NSH_FLAGS, oxm, flow->nsh.flags,
+            match->wc.masks.nsh.flags);
+>>>>>>> custom
     nxm_put_8m(&ctx, MFF_NSH_MDTYPE, oxm, flow->nsh.mdtype,
             match->wc.masks.nsh.mdtype);
     nxm_put_8m(&ctx, MFF_NSH_NP, oxm, flow->nsh.np,
             match->wc.masks.nsh.np);
+<<<<<<< HEAD
     spi_mask = nsh_path_hdr_to_spi(match->wc.masks.nsh.path_hdr);
     if (spi_mask == htonl(NSH_SPI_MASK >> NSH_SPI_SHIFT)) {
         spi_mask = OVS_BE32_MAX;
@@ -1188,6 +1199,14 @@ nx_put_raw(struct ofpbuf *b, enum ofp_version oxm, const struct match *match,
     for (int i = 0; i < 4; i++) {
         nxm_put_32m(&ctx, MFF_NSH_C1 + i, oxm, flow->nsh.context[i],
                     match->wc.masks.nsh.context[i]);
+=======
+    nxm_put_32m(&ctx, MFF_NSH_SPI, oxm, flow->nsh.spi,
+                match->wc.masks.nsh.spi);
+    nxm_put_8m(&ctx, MFF_NSH_SI, oxm, flow->nsh.si, match->wc.masks.nsh.si);
+    for (int i = 0; i < 4; i++) {
+        nxm_put_32m(&ctx, MFF_NSH_C1 + i, oxm, flow->nsh.c[i],
+                    match->wc.masks.nsh.c[i]);
+>>>>>>> custom
     }
 
     /* Registers. */

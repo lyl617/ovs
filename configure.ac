@@ -13,7 +13,11 @@
 # limitations under the License.
 
 AC_PREREQ(2.63)
+<<<<<<< HEAD
 AC_INIT(openvswitch, 2.9.90, bugs@openvswitch.org)
+=======
+AC_INIT(openvswitch, 2.8.2, bugs@openvswitch.org)
+>>>>>>> custom
 AC_CONFIG_SRCDIR([datapath/datapath.c])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -29,6 +33,15 @@ AC_PROG_MKDIR_P
 AC_PROG_FGREP
 AC_PROG_EGREP
 PKG_PROG_PKG_CONFIG
+<<<<<<< HEAD
+=======
+
+AC_ARG_VAR([PERL], [path to Perl interpreter])
+AC_PATH_PROG([PERL], perl, no)
+if test "$PERL" = no; then
+   AC_MSG_ERROR([Perl interpreter not found in $PATH or $PERL.])
+fi
+>>>>>>> custom
 
 AM_MISSING_PROG([AUTOM4TE], [autom4te])
 
@@ -108,8 +121,12 @@ AC_CHECK_MEMBERS([struct sockaddr_in6.sin6_scope_id], [], [],
 #include <sys/types.h>
 #include <netinet/in.h>]])
 AC_CHECK_FUNCS([mlockall strnlen getloadavg statvfs getmntent_r sendmmsg clock_gettime])
+<<<<<<< HEAD
 AC_CHECK_HEADERS([mntent.h sys/statvfs.h linux/types.h linux/if_ether.h])
 AC_CHECK_HEADERS([linux/net_namespace.h stdatomic.h])
+=======
+AC_CHECK_HEADERS([mntent.h sys/statvfs.h linux/types.h linux/if_ether.h stdatomic.h])
+>>>>>>> custom
 AC_CHECK_HEADERS([net/if_mib.h], [], [], [[#include <sys/types.h>
 #include <net/if.h>]])
 

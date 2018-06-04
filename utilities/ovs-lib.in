@@ -419,7 +419,15 @@ upgrade_db () {
         install_dir `dirname $DB_FILE`
         create_db "$DB_FILE" "$DB_SCHEMA"
     elif test X"`ovsdb_tool needs-conversion "$DB_FILE" "$DB_SCHEMA"`" = Xyes; then
+<<<<<<< HEAD
         backup_db || return 1
+=======
+        # Back up the old version.
+        version=`ovsdb_tool db-version "$DB_FILE"`
+        cksum=`ovsdb_tool db-cksum "$DB_FILE" | awk '{print $1}'`
+        backup=$DB_FILE.backup$version-$cksum
+        action "Backing up database to $backup" cp "$DB_FILE" "$backup" || return 1
+>>>>>>> custom
 
         # Compact database.  This is important if the old schema did not enable
         # garbage collection (i.e. if it did not have any tables with "isRoot":

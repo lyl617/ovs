@@ -97,4 +97,20 @@ struct ovs_key_nsh {
 }
 #endif
 
+/* Network Service Header keys */
+struct flow_nsh {
+    uint8_t flags;
+    uint8_t mdtype;
+    uint8_t np;
+    uint8_t si;
+    ovs_be32 spi;
+    ovs_be32 c[4];
+};
+
+/* NSH flags */
+#define FLOW_NSH_F_OAM (1 << 0)
+#define FLOW_NSH_F_CTX (1 << 1)
+
+#define FLOW_NSH_F_MASK ((1 << 2) - 1)
+
 #endif /* packets.h */

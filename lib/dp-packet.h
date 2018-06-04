@@ -809,7 +809,11 @@ dp_packet_batch_init_packet_fields(struct dp_packet_batch *batch)
 {
     struct dp_packet *packet;
 
+<<<<<<< HEAD
     DP_PACKET_BATCH_FOR_EACH (i, packet, batch) {
+=======
+    DP_PACKET_BATCH_FOR_EACH (packet, batch) {
+>>>>>>> custom
         dp_packet_reset_cutlen(packet);
         packet->packet_type = htonl(PT_ETH);
     }

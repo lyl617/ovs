@@ -1309,6 +1309,27 @@ tcp,tp_src=0x07c0/0xfff0
     </field>
   </group>
 
+  <group title="Network Service Header">
+    <field id="MFF_NSH_FLAGS"
+        title="flags field (8 bits)"/>
+    <field id="MFF_NSH_MDTYPE"
+        title="mdtype field (8 bits)"/>
+    <field id="MFF_NSH_NP"
+        title="np (next protocol) field (8 bits)"/>
+    <field id="MFF_NSH_SPI"
+        title="spi (service path identifier) field (24 bits)"/>
+    <field id="MFF_NSH_SI"
+        title="si (service index) field (8 bits)"/>
+    <field id="MFF_NSH_C1"
+        title="c1 (Network Platform Context) field (32 bits)"/>
+    <field id="MFF_NSH_C2"
+        title="c2 (Network Shared Context) field (32 bits)"/>
+    <field id="MFF_NSH_C3"
+        title="c3 (Service Platform Context) field (32 bits)"/>
+    <field id="MFF_NSH_C4"
+        title="c4 (Service Shared Context) field (32 bits)"/>
+  </group>
+
   <group title="Tunnel">
     <p>
       The fields in this group relate to tunnels, which Open vSwitch

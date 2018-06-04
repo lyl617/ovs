@@ -27,8 +27,21 @@ openvswitch_sources = \
 	vport.c \
 	vport-internal_dev.c \
 	vport-netdev.c \
+<<<<<<< HEAD
 	nsh.c \
 	meter.c
+=======
+	countmax.c \
+	sketch_report.c \
+	Bitmap.c \
+	Counter.c \
+	FMsketch.c \
+	GeneralSketchBloom.c \
+	GeneralUtil.c \
+	GeneralVSketch.c \
+	HyperLogLog.c 
+	
+>>>>>>> custom
 
 vport_geneve_sources = vport-geneve.c
 vport_vxlan_sources = vport-vxlan.c
@@ -47,7 +60,17 @@ openvswitch_headers = \
 	vport.h \
 	vport-internal_dev.h \
 	vport-netdev.h \
+<<<<<<< HEAD
 	meter.h
+=======
+	Bitmap.h \
+	Counter.h \
+	FMsketch.h \
+	GeneralSketchBloom.h \
+	GeneralUtil.h \
+	GeneralVSketch.h \
+	HyperLogLog.h 
+>>>>>>> custom
 
 dist_sources = $(foreach module,$(dist_modules),$($(module)_sources))
 dist_headers = $(foreach module,$(dist_modules),$($(module)_headers))
