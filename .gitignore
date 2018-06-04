@@ -61,6 +61,7 @@
 /stamp-h1
 /_build-gcc
 /_build-clang
+/.vs
 Module.symvers
 TAGS
 cscope.*
