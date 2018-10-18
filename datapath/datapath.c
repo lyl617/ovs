@@ -270,8 +270,9 @@ void ovs_dp_process_packet(struct sk_buff *skb, struct sw_flow_key *key)
 
 	/* Look up flow. */
 	flow = ovs_flow_tbl_lookup_stats(&dp->table, key, skb_get_hash(skb),
-					 &n_mask_hit);
-	if (unlikely(!flow)) {
+					 &n_mask_hit);//基于前面生成的key值进行流表查找，返回匹配的流表项，结构为sw_flow。
+	if (unlikely(!flow)) {// 未匹配成功，调用ovs_dp_upcall上传至userspace进行匹配。 (包括包和key都要上传) 
+	                      //unlikely 宏 等价于if(!flow) 但是!flow取0的可能性更大
 		struct dp_upcall_info upcall;
 		int error;
 
@@ -290,7 +291,7 @@ void ovs_dp_process_packet(struct sk_buff *skb, struct sw_flow_key *key)
 
 	ovs_flow_stats_update(flow, key->tp.flags, skb);
 	sf_acts = rcu_dereference(flow->sf_acts);
-	ovs_execute_actions(dp, skb, sf_acts, key);
+	ovs_execute_actions(dp, skb, sf_acts, key);//若存在匹配，则直接调用ovs_execute_actions执行对应的action，比如添加vlan头，转发到某个port等
 
 	stats_counter = &stats->n_hit;
 
@@ -2415,15 +2416,15 @@ static int __init dp_init(void)
 	if (err)
 		goto error_action_fifos_exit;
 
-	err = ovs_flow_init();
+	err = ovs_flow_init();//申请 flow_cache 和flow_status_cache
 	if (err)
 		goto error_unreg_rtnl_link;
 
-	err = ovs_vport_init();
+	err = ovs_vport_init();//vport 数据结构初始化，申请dev_table
 	if (err)
 		goto error_flow_exit;
 
-	err = register_pernet_device(&ovs_net_ops);
+	err = register_pernet_device(&ovs_net_ops);//注册网络名字空间设备
 	if (err)
 		goto error_vport_exit;
 
@@ -2431,7 +2432,7 @@ static int __init dp_init(void)
 	if (err)
 		goto error_netns_exit;
 
-	err = register_netdevice_notifier(&ovs_dp_device_notifier);
+	err = register_netdevice_notifier(&ovs_dp_device_notifier);//注册设备通知事件
 	if (err)
 		goto error_compat_exit;
 
@@ -2439,7 +2440,7 @@ static int __init dp_init(void)
 	if (err)
 		goto error_unreg_notifier;
 
-	err = dp_register_genl();
+	err = dp_register_genl();//初始化dp相关的netlink的family和ops
 	if (err < 0)
 		goto error_unreg_netdev;
 
