@@ -82,16 +82,17 @@ struct vport_portids {
  */
 struct vport {
 	struct net_device *dev;
-	struct datapath	*dp;
-	struct vport_portids __rcu *upcall_portids;
-	u16 port_no;
-
+	struct datapath	*dp;//网桥结构体指针，表示该端口属于哪个网桥
+	struct vport_portids __rcu *upcall_portids;//netlink端口收到的数据包时使用的端口id
+	u16 port_no;//端口号，唯一标识该端口
+	//一个网桥有多个端口，而这些端口是用哈希链表来存储的
+	//链表元素，里面没有数据，只有next和prev指针，数据部分是vport结构体的其他成员
 	struct hlist_node hash_node;
-	struct hlist_node dp_hash_node;
-	const struct vport_ops *ops;
+	struct hlist_node dp_hash_node;//网桥的哈希链表元素
+	const struct vport_ops *ops;//端口结构体的操作函数指针结构体，结构体里面存放了很多操作函数的函数指针
 
 	struct list_head detach_list;
-	struct rcu_head rcu;
+	struct rcu_head rcu;//一种锁机制
 };
 
 /**
@@ -104,6 +105,7 @@ struct vport {
  * @dp: New vport's datapath.
  * @port_no: New vport's port number.
  */
+//创建新vport时要传入的参数
 struct vport_parms {
 	const char *name;
 	enum ovs_vport_type type;
@@ -112,7 +114,7 @@ struct vport_parms {
 	/* For ovs_vport_alloc(). */
 	struct datapath *dp;
 	u16 port_no;
-	struct nlattr *upcall_portids;
+	struct nlattr *upcall_portids;//和netlink通信时使用的端口id
 };
 
 /**
@@ -131,17 +133,18 @@ struct vport_parms {
  * @send: Send a packet on the device.
  * zero for dropped packets or negative for error.
  */
+//端口vport操作函数的函数指针结构体，是操作函数的集合，里面存放了所有有关vport操作函数的函数指针
 struct vport_ops {
-	enum ovs_vport_type type;
+	enum ovs_vport_type type;//端口类型
 
 	/* Called with ovs_mutex. */
-	struct vport *(*create)(const struct vport_parms *);
-	void (*destroy)(struct vport *);
+	struct vport *(*create)(const struct vport_parms *);//根据指定的参数创建新的vport，成功返回新端口指针
+	void (*destroy)(struct vport *);//销毁端口函数
 
 	int (*set_options)(struct vport *, struct nlattr *);
 	int (*get_options)(const struct vport *, struct sk_buff *);
 
-	netdev_tx_t (*send)(struct sk_buff *skb);
+	netdev_tx_t (*send)(struct sk_buff *skb);//发送数据包到设备上
 #ifndef USE_UPSTREAM_TUNNEL
 	int  (*fill_metadata_dst)(struct net_device *dev, struct sk_buff *skb);
 #endif

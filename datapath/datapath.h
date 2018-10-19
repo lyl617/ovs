@@ -50,10 +50,11 @@
  *   @n_mask_hit / (@n_hit + @n_missed)  will be the average masks looked
  *   up per packet.
  */
+//cpu 对给定的数据包处理统计
 struct dp_stats_percpu {
-	u64 n_hit;
-	u64 n_missed;
-	u64 n_lost;
+	u64 n_hit;//匹配成功的数据包个数
+	u64 n_missed;//匹配失败的数据包个数,n_hit+n_missed就是接受到的数据包总和
+	u64 n_lost;//丢失的数据包个数（可能是datapath队列溢出导致）
 	u64 n_mask_hit;
 	struct u64_stats_sync syncp;
 };
@@ -120,13 +121,14 @@ struct ovs_skb_cb {
  * @egress_tun_info: If nonnull, becomes %OVS_PACKET_ATTR_EGRESS_TUN_KEY.
  * @mru: If not zero, Maximum received IP fragment size.
  */
+//把数据包传送给用户控件所需的参数结构体
 struct dp_upcall_info {
 	struct ip_tunnel_info *egress_tun_info;
-	const struct nlattr *userdata;
+	const struct nlattr *userdata;//数据的大小，若为空，ovs_packet_attr_userdata传送到用户空间
 	const struct nlattr *actions;
 	int actions_len;
-	u32 portid;
-	u8 cmd;
+	u32 portid;//发送数据包的netlink的PID，其实就是netlink通信的id号
+	u8 cmd;//命令，ovs_packet_cmd_.* 之一
 	u16 mru;
 };
 

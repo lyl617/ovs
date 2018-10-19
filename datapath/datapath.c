@@ -259,14 +259,14 @@ void ovs_dp_detach_port(struct vport *p)
 void ovs_dp_process_packet(struct sk_buff *skb, struct sw_flow_key *key)
 {
 	const struct vport *p = OVS_CB(skb)->input_vport;
-	struct datapath *dp = p->dp;
-	struct sw_flow *flow;
+	struct datapath *dp = p->dp;//定义网桥变量，得到端口所在的网桥指针
+	struct sw_flow *flow;//流表
 	struct sw_flow_actions *sf_acts;
-	struct dp_stats_percpu *stats;
+	struct dp_stats_percpu *stats;//cpu中对数据包的统计
 	u64 *stats_counter;
 	u32 n_mask_hit;
 
-	stats = this_cpu_ptr(dp->stats_percpu);
+	stats = this_cpu_ptr(dp->stats_percpu);//对网桥中的数据包统计属性进行初始化
 
 	/* Look up flow. */
 	flow = ovs_flow_tbl_lookup_stats(&dp->table, key, skb_get_hash(skb),
@@ -277,26 +277,28 @@ void ovs_dp_process_packet(struct sk_buff *skb, struct sw_flow_key *key)
 		int error;
 
 		memset(&upcall, 0, sizeof(upcall));
-		upcall.cmd = OVS_PACKET_CMD_MISS;
-		upcall.portid = ovs_vport_find_upcall_portid(p, skb);
+		upcall.cmd = OVS_PACKET_CMD_MISS;//命令
+		upcall.portid = ovs_vport_find_upcall_portid(p, skb);//netlink通信时的id号
 		upcall.mru = OVS_CB(skb)->mru;
-		error = ovs_dp_upcall(dp, skb, key, &upcall, 0);
+		error = ovs_dp_upcall(dp, skb, key, &upcall, 0);//把数据包发送到用户控件
 		if (unlikely(error))
 			kfree_skb(skb);
 		else
 			consume_skb(skb);
-		stats_counter = &stats->n_missed;
+		stats_counter = &stats->n_missed;//用未匹配到流表项的包数，给计数器赋值
 		goto out;
 	}
-
+	//匹配成功
 	ovs_flow_stats_update(flow, key->tp.flags, skb);
 	sf_acts = rcu_dereference(flow->sf_acts);
 	ovs_execute_actions(dp, skb, sf_acts, key);//若存在匹配，则直接调用ovs_execute_actions执行对应的action，比如添加vlan头，转发到某个port等
 
-	stats_counter = &stats->n_hit;
+	stats_counter = &stats->n_hit;//这是匹配成功的，用匹配成功的数据包数赋值于计数器变量
 
 out:
 	/* Update datapath statistics. */
+	//匹配失败，数据包发到用户空间后，跳转到该处
+	//对处理过的数据包数进行调整，虽然没匹配到流表，但也算是处理掉了一个数据包，所以计数器变量应该增加1
 	u64_stats_update_begin(&stats->syncp);
 	(*stats_counter)++;
 	stats->n_mask_hit += n_mask_hit;
@@ -317,7 +319,7 @@ int ovs_dp_upcall(struct datapath *dp, struct sk_buff *skb,
 	}
 
 	if (!skb_is_gso(skb))
-		err = queue_userspace_packet(dp, skb, key, upcall_info, cutlen);
+		err = queue_userspace_packet(dp, skb, key, upcall_info, cutlen);//将信息排队发到用户空间去
 	else
 		err = queue_gso_packets(dp, skb, key, upcall_info, cutlen);
 	if (err)
